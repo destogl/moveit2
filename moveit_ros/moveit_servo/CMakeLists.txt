@@ -21,6 +21,7 @@ set(SERVO_CONTROLLER_INPUT servo_controller_input)
 
 # Executable Nodes ##############################################
 set(CPP_DEMO_NAME servo_cpp_demo)
+set(JOYSTICK_TO_SERVO joystick_to_servo)
 set(POSE_TRACKING_DEMO_NAME servo_pose_tracking_demo)
 set(FAKE_SERVO_CMDS_NAME fake_command_publisher)
 
@@ -114,23 +115,16 @@ add_executable(${CPP_DEMO_NAME} src/cpp_interface_demo/servo_cpp_interface_demo.
 ament_target_dependencies(${CPP_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 target_link_libraries(${CPP_DEMO_NAME} ${SERVO_LIB_NAME})
 
-# An example of pose tracking
-add_executable(${POSE_TRACKING_DEMO_NAME} src/cpp_interface_demo/pose_tracking_demo.cpp)
-target_link_libraries(${POSE_TRACKING_DEMO_NAME} ${POSE_TRACKING})
-ament_target_dependencies(${POSE_TRACKING_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
-
-# Add executable for using a controller
-set(SERVO_CONTROLLER_INPUT servo_controller_input)
-add_library(${SERVO_CONTROLLER_INPUT} SHARED src/teleop_demo/joystick_servo_example.cpp)
-ament_target_dependencies(${SERVO_CONTROLLER_INPUT} ${THIS_PACKAGE_INCLUDE_DEPENDS})
-rclcpp_components_register_nodes(${SERVO_CONTROLLER_INPUT} "moveit_servo::JoyToServoPub")
-
 # Add executable for generic joystick to servo input
-set(JOYSTICK_TO_SERVO joystick_to_servo)
 add_library(${JOYSTICK_TO_SERVO} SHARED src/teleop_demo/joystick_to_servo.cpp)
 target_include_directories(${JOYSTICK_TO_SERVO} PRIVATE include)
 ament_target_dependencies(${JOYSTICK_TO_SERVO} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 rclcpp_components_register_nodes(${JOYSTICK_TO_SERVO} "moveit_servo::JoystickToServo")
+
+# An example of pose tracking
+add_executable(${POSE_TRACKING_DEMO_NAME} src/cpp_interface_demo/pose_tracking_demo.cpp)
+target_link_libraries(${POSE_TRACKING_DEMO_NAME} ${POSE_TRACKING})
+ament_target_dependencies(${POSE_TRACKING_DEMO_NAME} ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # Add executable to publish fake servo commands for testing/demo purposes
 add_executable(${FAKE_SERVO_CMDS_NAME} test/publish_fake_jog_commands.cpp)
